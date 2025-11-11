@@ -1,0 +1,14 @@
+@model DtcCode
+@{
+    ViewData["Title"] = "Delete DTC";
+}
+
+<h1>Delete diagnostic trouble code</h1>
+
+<p>Are you sure you want to remove code <strong>@Model.Code</strong>?</p>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Cancel</a>
+</form>

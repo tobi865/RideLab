@@ -15,7 +15,7 @@ namespace RideLab.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.0.0")
+                .HasAnnotation("ProductVersion", "10.0.0-rc.2.25502.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -68,71 +68,6 @@ namespace RideLab.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -219,6 +154,488 @@ namespace RideLab.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("RideLab.Models.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("nvarchar(64)")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PreferredWorkshop")
+                        .HasColumnType("nvarchar(128)")
+                        .HasMaxLength(128);
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("RideLab.Models.Bike", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Engine")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("Manufacturer")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Model")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("Vin")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<int?>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Bikes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAtUtc = new DateTime(2024, 1, 10, 8, 30, 0, DateTimeKind.Utc),
+                            Engine = "636cc",
+                            Manufacturer = "Kawasaki",
+                            Model = "ZX-6R",
+                            Name = "Kawasaki Ninja ZX-6R",
+                            Notes = "Primary track bike",
+                            Vin = "JKAZX636AAA000001",
+                            Year = 2023
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAtUtc = new DateTime(2024, 3, 5, 9, 0, 0, DateTimeKind.Utc),
+                            Engine = "1254cc",
+                            Manufacturer = "BMW",
+                            Model = "R1250 GS",
+                            Name = "BMW R1250 GS Adventure",
+                            Notes = "Adventure touring setup",
+                            Vin = "WB10J2305N6Z00002",
+                            Year = 2022
+                        });
+                });
+
+            modelBuilder.Entity("RideLab.Models.BikeDtc", b =>
+                {
+                    b.Property<int>("BikeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DtcCodeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DetectedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsResolved")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.HasKey("BikeId", "DtcCodeId");
+
+                    b.HasIndex("DtcCodeId");
+
+                    b.ToTable("BikeDtcs");
+
+                    b.HasData(
+                        new
+                        {
+                            BikeId = 1,
+                            DtcCodeId = 1,
+                            DetectedAtUtc = new DateTime(2024, 5, 12, 7, 0, 0, DateTimeKind.Utc),
+                            IsResolved = false,
+                            Notes = "Pending inspection"
+                        },
+                        new
+                        {
+                            BikeId = 1,
+                            DtcCodeId = 2,
+                            DetectedAtUtc = new DateTime(2024, 5, 12, 7, 10, 0, DateTimeKind.Utc),
+                            IsResolved = true,
+                            Notes = "Spark plug replaced"
+                        },
+                        new
+                        {
+                            BikeId = 2,
+                            DtcCodeId = 3,
+                            DetectedAtUtc = new DateTime(2024, 6, 18, 15, 5, 0, DateTimeKind.Utc),
+                            IsResolved = false,
+                            Notes = "Monitor after ABS bleed"
+                        });
+                });
+
+            modelBuilder.Entity("RideLab.Models.DtcCode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(16)")
+                        .HasMaxLength(16);
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("Recommendation")
+                        .HasColumnType("nvarchar(512)")
+                        .HasMaxLength(512);
+
+                    b.Property<string>("Severity")
+                        .HasColumnType("nvarchar(32)")
+                        .HasMaxLength(32);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DtcCodes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Code = "P0135",
+                            Description = "O2 Sensor Heater Circuit Malfunction",
+                            Recommendation = "Inspect sensor wiring and replace sensor if necessary",
+                            Severity = "High"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Code = "P0301",
+                            Description = "Cylinder 1 Misfire Detected",
+                            Recommendation = "Check spark plug, coil, and fuel injector",
+                            Severity = "Critical"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Code = "C1234",
+                            Description = "ABS Pressure Sensor Range/Performance",
+                            Recommendation = "Verify ABS pressure sensor calibration",
+                            Severity = "Medium"
+                        });
+                });
+
+            modelBuilder.Entity("RideLab.Models.ObdDataPoint", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Metric")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(64)")
+                        .HasMaxLength(64);
+
+                    b.Property<int>("ObdSessionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RecordedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("Value")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ObdSessionId");
+
+                    b.ToTable("ObdDataPoints");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Metric = "RPM",
+                            ObdSessionId = 1,
+                            RecordedAtUtc = new DateTime(2024, 5, 12, 6, 47, 0, DateTimeKind.Utc),
+                            Value = 11000.0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Metric = "Throttle",
+                            ObdSessionId = 1,
+                            RecordedAtUtc = new DateTime(2024, 5, 12, 6, 47, 30, DateTimeKind.Utc),
+                            Value = 92.0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Metric = "EngineTemp",
+                            ObdSessionId = 2,
+                            RecordedAtUtc = new DateTime(2024, 6, 18, 14, 20, 0, DateTimeKind.Utc),
+                            Value = 98.0
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Metric = "Speed",
+                            ObdSessionId = 2,
+                            RecordedAtUtc = new DateTime(2024, 6, 18, 14, 25, 0, DateTimeKind.Utc),
+                            Value = 110.0
+                        });
+                });
+
+            modelBuilder.Entity("RideLab.Models.ObdSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AnomalySummary")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<double?>("AverageRpm")
+                        .HasColumnType("float");
+
+                    b.Property<int>("BikeId")
+                        .HasColumnType("int");
+
+                    b.Property<double?>("MaxThrottlePosition")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<DateTime>("SessionDateUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SourceFileName")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("StoredFilePath")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BikeId");
+
+                    b.ToTable("ObdSessions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AnomalySummary = "Short lean condition detected between lap 3-4",
+                            AverageRpm = 9800.0,
+                            BikeId = 1,
+                            MaxThrottlePosition = 96.0,
+                            Notes = "Morning warm-up session",
+                            SessionDateUtc = new DateTime(2024, 5, 12, 6, 45, 0, DateTimeKind.Utc),
+                            SourceFileName = "session-trackday.csv",
+                            StoredFilePath = "/uploads/session-trackday.csv"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AnomalySummary = "Detected intermittent knock sensor spike",
+                            AverageRpm = 5200.0,
+                            BikeId = 2,
+                            MaxThrottlePosition = 78.0,
+                            Notes = "Alpine pass run",
+                            SessionDateUtc = new DateTime(2024, 6, 18, 14, 15, 0, DateTimeKind.Utc),
+                            SourceFileName = "canbus-tour.json",
+                            StoredFilePath = "/uploads/canbus-tour.json"
+                        });
+                });
+
+            modelBuilder.Entity("RideLab.Models.ServiceReminder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("BikeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DueMileage")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(128)")
+                        .HasMaxLength(128);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BikeId");
+
+                    b.ToTable("ServiceReminders");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BikeId = 1,
+                            CreatedAtUtc = new DateTime(2024, 5, 13, 8, 0, 0, DateTimeKind.Utc),
+                            Description = "Use racing spec oil",
+                            DueDate = new DateTime(2024, 7, 1, 0, 0, 0, DateTimeKind.Utc),
+                            DueMileage = 10000,
+                            IsCompleted = false,
+                            Title = "Oil and filter change"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BikeId = 2,
+                            CreatedAtUtc = new DateTime(2024, 6, 20, 9, 30, 0, DateTimeKind.Utc),
+                            Description = "Check shaft drive play",
+                            DueDate = new DateTime(2024, 8, 10, 0, 0, 0, DateTimeKind.Utc),
+                            DueMileage = 18000,
+                            IsCompleted = false,
+                            Title = "Final drive inspection"
+                        });
+                });
+
+            modelBuilder.Entity("RideLab.Models.BikeDtc", b =>
+                {
+                    b.HasOne("RideLab.Models.Bike", "Bike")
+                        .WithMany("ActiveDtcs")
+                        .HasForeignKey("BikeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RideLab.Models.DtcCode", "DtcCode")
+                        .WithMany("Bikes")
+                        .HasForeignKey("DtcCodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("RideLab.Models.ObdDataPoint", b =>
+                {
+                    b.HasOne("RideLab.Models.ObdSession", "ObdSession")
+                        .WithMany("DataPoints")
+                        .HasForeignKey("ObdSessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("RideLab.Models.ObdSession", b =>
+                {
+                    b.HasOne("RideLab.Models.Bike", "Bike")
+                        .WithMany("ObdSessions")
+                        .HasForeignKey("BikeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("RideLab.Models.ServiceReminder", b =>
+                {
+                    b.HasOne("RideLab.Models.Bike", "Bike")
+                        .WithMany("ServiceReminders")
+                        .HasForeignKey("BikeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -230,7 +647,7 @@ namespace RideLab.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("RideLab.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -239,7 +656,7 @@ namespace RideLab.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("RideLab.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -254,7 +671,7 @@ namespace RideLab.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("RideLab.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -263,7 +680,7 @@ namespace RideLab.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("RideLab.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

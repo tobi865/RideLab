@@ -1,0 +1,43 @@
+@using System.Linq
+@model DtcCode
+@{
+    ViewData["Title"] = $"DTC {Model.Code}";
+}
+
+<h1>@Model.Code</h1>
+<p class="text-muted">Severity: @Model.Severity</p>
+<p>@Model.Description</p>
+
+@if (!string.IsNullOrWhiteSpace(Model.Recommendation))
+{
+    <div class="alert alert-info">
+        <strong>Recommendation:</strong>
+        <p class="mb-0">@Model.Recommendation</p>
+    </div>
+}
+
+<h2 class="h4">Affected bikes</h2>
+@if (!Model.Bikes.Any())
+{
+    <p>No bikes have reported this code yet.</p>
+}
+else
+{
+    <ul class="list-group">
+        @foreach (var link in Model.Bikes)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>@link.Bike?.Name</span>
+                <small class="text-muted">Detected @link.DetectedAtUtc.ToLocalTime()</small>
+            </li>
+        }
+    </ul>
+}
+
+@if (User.Identity?.IsAuthenticated ?? false)
+{
+    <div class="mt-4 btn-group" role="group">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">Edit</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">Delete</a>
+    </div>
+}

@@ -1,0 +1,40 @@
+@model IEnumerable<ServiceReminder>
+@{
+    ViewData["Title"] = "Service reminders";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0">Service reminders</h1>
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <a asp-action="Create" class="btn btn-primary">New reminder</a>
+    }
+</div>
+
+<table class="table table-striped align-middle">
+    <thead>
+    <tr>
+        <th>Bike</th>
+        <th>Title</th>
+        <th>Due</th>
+        <th>Status</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var reminder in Model)
+    {
+        <tr>
+            <td>@reminder.Bike?.Name</td>
+            <td>@reminder.Title</td>
+            <td>@(reminder.DueDate?.ToString("d") ?? $"{reminder.DueMileage} km")</td>
+            <td>
+                <span class="badge @(reminder.IsCompleted ? "bg-success" : "bg-warning text-dark")">@(reminder.IsCompleted ? "Completed" : "Pending")</span>
+            </td>
+            <td class="text-end">
+                <a asp-action="Details" asp-route-id="@reminder.Id" class="btn btn-sm btn-outline-secondary">Details</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,129 @@
+@using System.Linq
+@using System.Text.Json
+@model ObdSession
+@{
+    ViewData["Title"] = $"OBD session #{Model.Id}";
+}
+
+<h1>Session for @Model.Bike?.Name</h1>
+<p class="text-muted">@Model.SessionDateUtc.ToLocalTime()</p>
+
+@if (!string.IsNullOrEmpty(Model.StoredFilePath))
+{
+    <p><strong>Source file:</strong> <a href="@Model.StoredFilePath" target="_blank">@Model.SourceFileName</a></p>
+}
+
+<dl class="row">
+    <dt class="col-sm-3">Average RPM</dt>
+    <dd class="col-sm-9">@Model.AverageRpm?.ToString("F0")</dd>
+    <dt class="col-sm-3">Max throttle</dt>
+    <dd class="col-sm-9">@Model.MaxThrottlePosition?.ToString("F0")%</dd>
+    <dt class="col-sm-3">Anomalies</dt>
+    <dd class="col-sm-9">@Model.AnomalySummary</dd>
+    <dt class="col-sm-3">Notes</dt>
+    <dd class="col-sm-9">@Model.Notes</dd>
+</dl>
+
+@if (Model.DataPoints.Any())
+{
+    <h2 class="h4">Data points</h2>
+    <table class="table table-sm">
+        <thead>
+        <tr>
+            <th>Metric</th>
+            <th>Value</th>
+            <th>Recorded at</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var point in Model.DataPoints.OrderBy(p => p.RecordedAtUtc))
+        {
+            <tr>
+                <td>@point.Metric</td>
+                <td>@point.Value</td>
+                <td>@point.RecordedAtUtc.ToLocalTime()</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <div class="mt-4">
+        <canvas id="sessionChart" height="120"></canvas>
+    </div>
+}
+else
+{
+    <p>No individual telemetry points have been ingested yet.</p>
+}
+
+@if (User.Identity?.IsAuthenticated ?? false)
+{
+    <div class="mt-4">
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">Delete session</a>
+        <a asp-controller="Bike" asp-action="Details" asp-route-id="@Model.BikeId" class="btn btn-secondary">Back to bike</a>
+    </div>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha256-y7zRPPYC1EYckynDUZt8R8yD705h0SKGlwWBvW2qgmM=" crossorigin="anonymous"></script>
+    <script>
+        const rawPoints = @Html.Raw(JsonSerializer.Serialize(Model.DataPoints
+            .OrderBy(p => p.RecordedAtUtc)
+            .Select(p => new { p.Metric, p.Value, Timestamp = p.RecordedAtUtc.ToUniversalTime().ToString("o") })));
+
+        if (rawPoints.length > 0 && window.Chart) {
+            const labels = [...new Set(rawPoints.map(p => p.Timestamp))];
+            const metrics = [...new Set(rawPoints.map(p => p.Metric))];
+            const palette = ['#0d6efd', '#dc3545', '#20c997', '#ffc107', '#6f42c1', '#6610f2'];
+            const datasets = metrics.map((metric, index) => {
+                const points = rawPoints.filter(p => p.Metric === metric);
+                const values = labels.map(label => {
+                    const match = points.find(p => p.Timestamp === label);
+                    return match ? match.Value : null;
+                });
+                return {
+                    label: metric,
+                    data: values,
+                    borderColor: palette[index % palette.length],
+                    tension: 0.25,
+                    fill: false,
+                    spanGaps: true
+                };
+            });
+
+            new Chart(document.getElementById('sessionChart'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        x: {
+                            ticks: {
+                                callback: function (value) {
+                                    return new Date(value).toLocaleTimeString();
+                                }
+                            },
+                            title: { display: true, text: 'Timestamp' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Value' }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                title: function (items) {
+                                    if (!items.length) { return ''; }
+                                    return new Date(items[0].label).toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+}

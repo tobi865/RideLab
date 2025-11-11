@@ -1,0 +1,14 @@
+@model ServiceReminder
+@{
+    ViewData["Title"] = "Delete reminder";
+}
+
+<h1>Delete service reminder</h1>
+
+<p>Are you sure you want to delete reminder "@Model.Title" for @Model.Bike?.Name?</p>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Cancel</a>
+</form>

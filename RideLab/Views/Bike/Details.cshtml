@@ -1,0 +1,114 @@
+@using System.Linq
+@model Bike
+@{
+    ViewData["Title"] = $"Bike - {Model.Name}";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="mb-0">@Model.Name</h1>
+        <p class="text-muted mb-0">@Model.Manufacturer @Model.Model (@Model.Year)</p>
+    </div>
+    <div class="btn-group" role="group">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">Edit</a>
+        <a asp-controller="ObdSession" asp-action="Upload" asp-route-bikeId="@Model.Id" class="btn btn-outline-secondary">Upload OBD</a>
+        <a asp-controller="Service" asp-action="Create" asp-route-bikeId="@Model.Id" class="btn btn-outline-secondary">New reminder</a>
+    </div>
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">VIN</dt>
+    <dd class="col-sm-9">@Model.Vin</dd>
+    <dt class="col-sm-3">Engine</dt>
+    <dd class="col-sm-9">@Model.Engine</dd>
+    <dt class="col-sm-3">Notes</dt>
+    <dd class="col-sm-9">@Model.Notes</dd>
+</dl>
+
+<h2 class="h4 mt-4">Active DTC codes</h2>
+@if (!Model.ActiveDtcs.Any())
+{
+    <p>No diagnostic trouble codes recorded.</p>
+}
+else
+{
+    <ul class="list-group mb-3">
+        @foreach (var item in Model.ActiveDtcs)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="fw-bold">@item.DtcCode?.Code</div>
+                    <div>@item.DtcCode?.Description</div>
+                    <small class="text-muted">Detected @item.DetectedAtUtc.ToLocalTime()</small>
+                </div>
+                <span class="badge @(item.IsResolved ? "bg-success" : "bg-danger")">@(item.IsResolved ? "Resolved" : "Open")</span>
+            </li>
+        }
+    </ul>
+}
+
+<h2 class="h4">Recent OBD sessions</h2>
+@if (!Model.ObdSessions.Any())
+{
+    <p>No telemetry sessions uploaded yet.</p>
+}
+else
+{
+    <table class="table table-sm">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Average RPM</th>
+            <th>Max throttle</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var session in Model.ObdSessions.OrderByDescending(s => s.SessionDateUtc))
+        {
+            <tr>
+                <td>@session.SessionDateUtc.ToLocalTime()</td>
+                <td>@session.AverageRpm?.ToString("F0")</td>
+                <td>@session.MaxThrottlePosition?.ToString("F0")%</td>
+                <td class="text-end">
+                    <a asp-controller="ObdSession" asp-action="Details" asp-route-id="@session.Id" class="btn btn-sm btn-outline-secondary">View</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<h2 class="h4">Service reminders</h2>
+@if (!Model.ServiceReminders.Any())
+{
+    <p>No reminders scheduled.</p>
+}
+else
+{
+    <table class="table table-sm">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Due</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var reminder in Model.ServiceReminders.OrderBy(r => r.IsCompleted).ThenBy(r => r.DueDate))
+        {
+            <tr>
+                <td>@reminder.Title</td>
+                <td>@(reminder.DueDate?.ToString("d") ?? $"{reminder.DueMileage} km")</td>
+                <td>
+                    <span class="badge @(reminder.IsCompleted ? "bg-success" : "bg-warning text-dark")">@(reminder.IsCompleted ? "Completed" : "Planned")</span>
+                </td>
+                <td class="text-end">
+                    <a asp-controller="Service" asp-action="Details" asp-route-id="@reminder.Id" class="btn btn-sm btn-outline-secondary">Details</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

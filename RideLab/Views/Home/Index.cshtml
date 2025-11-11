@@ -1,8 +1,28 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@{
+    ViewData["Title"] = "RideLab";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row g-4">
+    <div class="col-12 text-center">
+        <h1 class="display-4">RideLab Telemetry Garage</h1>
+        <p class="lead">Manage your bikes, analyse OBD-II telemetry and keep track of service tasks.</p>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="card-title h4">Track every ride</h2>
+                <p class="card-text">Upload CSV or JSON telemetry sessions and explore key metrics with Chart.js visualisations.</p>
+                <a asp-controller="ObdSession" asp-action="Upload" class="btn btn-primary">Upload OBD session</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="card-title h4">Stay ahead of maintenance</h2>
+                <p class="card-text">Receive proactive reminders powered by Hangfire jobs and resolve DTC codes with tailored recommendations.</p>
+                <a asp-controller="Service" asp-action="Index" class="btn btn-outline-primary">View service schedule</a>
+            </div>
+        </div>
+    </div>
 </div>
