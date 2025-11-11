@@ -1,0 +1,2 @@
+BikeId,SessionDateUtc,SourceFileName,StoredFilePath,Notes,AverageRpm,MaxThrottlePosition,AnomalySummary
+1,2025-11-11T18:38:41.752430,ninja1100sx_session.csv,/uploads/ninja1100sx_session.csv,"Highway test ride, stable performance.",7250,97.3,No anomalies detected

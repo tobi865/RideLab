@@ -1,7 +1,4 @@
-using System;
-using System.IO;
-using System.Linq;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -9,6 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using RideLab.Data;
 using RideLab.Models;
 using RideLab.Models.ViewModels;
+using System;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
 
 namespace RideLab.Controllers;
 
@@ -100,6 +101,32 @@ public class ObdSessionController(ApplicationDbContext context, IWebHostEnvironm
         _context.ObdSessions.Add(session);
         await _context.SaveChangesAsync();
 
+        // 🔍 Auto-analyze telemetry file
+        if (!string.IsNullOrEmpty(storedPath))
+        {
+            var physicalPath = Path.Combine(_environment.WebRootPath, storedPath.TrimStart('/'));
+            var dataPoints = await ParseTelemetryFile(physicalPath, session.Id);
+
+            if (dataPoints.Any())
+            {
+                _context.ObdDataPoints.AddRange(dataPoints);
+
+                var rpmValues = dataPoints.Where(d => d.Metric == "RPM").Select(d => d.Value).ToList();
+                var throttleValues = dataPoints.Where(d => d.Metric == "Throttle").Select(d => d.Value).ToList();
+
+                session.AverageRpm = rpmValues.Any() ? rpmValues.Average() : null;
+                session.MaxThrottlePosition = throttleValues.Any() ? throttleValues.Max() : null;
+                session.AnomalySummary = "Analyzed successfully";
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                session.AnomalySummary = "No telemetry data detected";
+                await _context.SaveChangesAsync();
+            }
+        }
+
+
         TempData["Message"] = "OBD session uploaded successfully. Run the analysis job to populate metrics.";
         return RedirectToAction(nameof(Details), new { id = session.Id });
     }
@@ -144,4 +171,70 @@ public class ObdSessionController(ApplicationDbContext context, IWebHostEnvironm
         ViewBag.BikeId = new SelectList(bikes, "Id", "Label", defaultId);
         return defaultId;
     }
+
+    private async Task<List<ObdDataPoint>> ParseTelemetryFile(string filePath, int sessionId)
+    {
+        var points = new List<ObdDataPoint>();
+
+        if (filePath.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+        {
+            var jsonText = await System.IO.File.ReadAllTextAsync(filePath);
+            using var doc = JsonDocument.Parse(jsonText);
+
+            if (doc.RootElement.TryGetProperty("samples", out var samples))
+            {
+                foreach (var s in samples.EnumerateArray())
+                {
+                    var timestamp = DateTime.Parse(s.GetProperty("timestamp").GetString()!);
+                    if (s.TryGetProperty("rpm", out var rpm))
+                        points.Add(new ObdDataPoint { ObdSessionId = sessionId, Metric = "RPM", Value = rpm.GetDouble(), RecordedAtUtc = timestamp });
+
+                    if (s.TryGetProperty("throttle_pct", out var throttle))
+                        points.Add(new ObdDataPoint { ObdSessionId = sessionId, Metric = "Throttle", Value = throttle.GetDouble(), RecordedAtUtc = timestamp });
+
+                    if (s.TryGetProperty("speed_kmh", out var speed))
+                        points.Add(new ObdDataPoint { ObdSessionId = sessionId, Metric = "Speed", Value = speed.GetDouble(), RecordedAtUtc = timestamp });
+                }
+            }
+        }
+        else if (filePath.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
+        {
+            var lines = await System.IO.File.ReadAllLinesAsync(filePath);
+            if (lines.Length > 1)
+            {
+                var headers = lines[0].Split(',');
+                int timestampIndex = Array.FindIndex(headers, h => h.Trim().Equals("timestamp", StringComparison.OrdinalIgnoreCase));
+                int rpmIndex = Array.FindIndex(headers, h => h.Trim().Equals("rpm", StringComparison.OrdinalIgnoreCase));
+                int throttleIndex = Array.FindIndex(headers, h => h.Trim().Equals("throttle_pct", StringComparison.OrdinalIgnoreCase));
+                int speedIndex = Array.FindIndex(headers, h => h.Trim().Equals("speed_kmh", StringComparison.OrdinalIgnoreCase));
+
+                // ✅ защитна проверка
+                if (timestampIndex == -1)
+                {
+                    Console.WriteLine("⚠️ Missing 'timestamp' column in CSV!");
+                    return points;
+                }
+
+                foreach (var line in lines.Skip(1))
+                {
+                    var parts = line.Split(',');
+                    if (parts.Length <= timestampIndex) continue;
+                    if (!DateTime.TryParse(parts[timestampIndex], out var timestamp)) continue;
+
+                    if (rpmIndex >= 0 && parts.Length > rpmIndex && double.TryParse(parts[rpmIndex], out var rpm))
+                        points.Add(new ObdDataPoint { ObdSessionId = sessionId, Metric = "RPM", Value = rpm, RecordedAtUtc = timestamp });
+
+                    if (throttleIndex >= 0 && parts.Length > throttleIndex && double.TryParse(parts[throttleIndex], out var throttle))
+                        points.Add(new ObdDataPoint { ObdSessionId = sessionId, Metric = "Throttle", Value = throttle, RecordedAtUtc = timestamp });
+
+                    if (speedIndex >= 0 && parts.Length > speedIndex && double.TryParse(parts[speedIndex], out var speed))
+                        points.Add(new ObdDataPoint { ObdSessionId = sessionId, Metric = "Speed", Value = speed, RecordedAtUtc = timestamp });
+                }
+            }
+
+        }
+
+        return points;
+    }
+
 }
